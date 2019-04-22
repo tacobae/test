@@ -1,10 +1,11 @@
 javascript:(function() {
 	let FC = window.FrenzyClicker || (window.FrenzyClicker = {
 		CCVersion: 2.019,
-		Version: 2.019.1
+		Version: "2.019.2",
 		Checking: null,
 		Clicking: null,
-		Debug: false
+		Debug: false,
+		Speed: 100,
 	});
 	
 	// Reset in case of reload
@@ -13,7 +14,7 @@ javascript:(function() {
 
 	// Check for version match
 	let load = true;
-	if (Game.version != FC.Version) {
+	if (Game.version != FC.CCVersion) {
 		load = confirm("Frency Clicker " + FC.Version + " is meant for Cookie Clicker version " + FC.CCVersion + ", you are playing version " + Game.version + ". Load anyway?");
 	}
 	if (!load)
@@ -21,12 +22,11 @@ javascript:(function() {
 		
 	// Set up the clicking
 	setInterval(function() {
-		if (FC.Clicking) {
-			debug("FC already clicking, nothing to do.")
+		if (FC.Clicking > 0) {
+			debug("Clicking big cookie (frenzy) or all golden cookies (storm) " + (1000 / FC.Speed).toFixed(2) + " times per second.")
 			return;
 		}
 			
-		debug("Checking for buffs.");
 		if (Game.hasBuff('Click frenzy') || Game.hasBuff('Cookie storm')) {
 			debug("Buff active, starting clicking.");
 			FC.Clicking = setInterval(function() {
@@ -39,15 +39,17 @@ javascript:(function() {
 					Game.ClickCookie();
 				}
 				else {
-					debug("Buff over, stoping clicking.");
-					clearInterval(FC.Clicking);
+					debug("Buff over, stopping clicking.");
+					FC.Clicking = clearInterval(FC.Clicking);
 				}
-			}, 100);
+			}, FC.Speed);
 		}
+		else
+			debug("Waiting for frenzy or storm.");
 	}, 500);
 	
 	function debug(...params) {
 		if (FC.Debug)
-			console.debug(console, params);
+			console.debug.apply(console, params);
 	}
 }());
