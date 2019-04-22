@@ -11,7 +11,7 @@ Create a bookmark with this line in the address bar:
 With Cookie Clicker open, click the bookmark.
 
 ## Configuration
-You can tweak the clicking speed by changing the FC's `Speed` setting (clicking frequency in milliseconds) in your browser's JavaScript Console:
+You can tweak the clicking speed by changing the FC's `Speed` setting (clicking frequency in milliseconds) in your browser's JavaScript Console (the default is 100, meaning 10 times per second):
 
     FrenzyClicker.Speed = 200
 
