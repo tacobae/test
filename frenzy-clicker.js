@@ -1,7 +1,7 @@
 javascript:(function() {
 	let FC = window.FrenzyClicker || (window.FrenzyClicker = {
 		CCVersion: 2.019,
-		Version: "2.019.2",
+		Version: "2.019.3",
 		Checking: null,
 		Clicking: null,
 		Debug: false,
@@ -47,6 +47,13 @@ javascript:(function() {
 		else
 			debug("Waiting for frenzy or storm.");
 	}, 500);
+	
+	let title = "Frenzy Clicker " + FC.Version + " loaded";
+	let text = "The big cookie (during Click Frenzy) and all golden cookies (during Cookie Storm) will be automatically clicked " 
+	+ (1000 / FC.Speed).toFixed(2) + " times per second.";
+	
+	Game.Notify(title, text);
+	console.info(title + ". " + text);
 	
 	function debug(...params) {
 		if (FC.Debug)
