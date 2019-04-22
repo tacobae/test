@@ -10,6 +10,11 @@ Create a bookmark with this line in the address bar:
 
 With Cookie Clicker open, click the bookmark.
 
+## Configuration
+You can tweak the clicking speed by changing the FC's `Speed` setting (clicking frequency in milliseconds) in your browser's JavaScript Console:
+
+    FrenzyClicker.Speed = 200
+
 ## Other mods
 Frenzy Clicker should not conflict with any other mods (using other auto-clickers at the same time might slow down the game, though). To easily load FC and other mods together, just add them to the bookmark.
 
