@@ -1,6 +1,6 @@
 # Frenzy Clicker
 
-A simple add-on for [Cookie Clicker](http://orteil.dashnet.org/cookieclicker/) that auto-clicks during Click Frenzy and Cookie Storm.
+A simple add-on for [Cookie Clicker](http://orteil.dashnet.org/cookieclicker/) that auto-clicks during Click Frenzy, Cookie Storm, Dragonflight, Elder Frenzy and Cursed Finger.
 
 ## How to use
 
