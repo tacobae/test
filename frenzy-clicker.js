@@ -1,16 +1,21 @@
 'use strict';
 
 javascript:(function() {
-	class FrenzyClicker {
+	var self;
 	
+	class FrenzyClicker {
+		
 		constructor() {
+			self = this;
+		
 			this.mainTicker = 0;
 			this.settings = {
+				enabled: false,
 				frequency: 100,
 				debug: true,
 			};
 			this.ccVersion = 2.019,
-			this.version = "2.019.4",
+			this.version = "2.019.5",
 			this.clickBuffs = [
 				"Elder frenzy",
 				"Click frenzy",
@@ -24,10 +29,111 @@ javascript:(function() {
 			window.FrenzyClicker = this;
 		}
 		
+		settingsMenu() {
+			if (Game.onMenu != "prefs")
+				return;
 		
-	
+			// Title
+			var div = document.createElement('div');
+			div.className = 'title ';
+			div.textContent = 'Frenzy Clicker';
+			
+			var el = document.createDocumentFragment();	
+
+			// Header
+			el.appendChild(div);
+			
+			// Toggle
+			let toggle = document.createElement("div");
+			toggle.className = "listing";
+			let onOff = document.createElement("a");
+			onOff.className = "option";
+			onOff.textContent = "Auto-clicking " + self.Enabled ? "ON" : "OFF";
+			onOff.onclick = self.toggleMod;
+			toggle.appendChild(onOff);
+			el.appendChild(toggle);
+			
+			// Speed
+			let speed = document.createElement('div');
+			speed.className = 'listing';
+			let minus = document.createElement('a');
+			minus.className = 'option';
+			minus.onclick = self.speedMod;
+			minus.textContent = '-';
+			speed.appendChild(minus);
+			let text = document.createElement('a');
+			text.className = "option";
+			text.id = "FrenzyClicker_Speed";
+			text.textContent = (1000 / this.Speed).toFixed(2) + " / s";
+			text.onclick = self.speedMod;
+			speed.appendChild(text);
+			let plus = document.createElement('a');
+			plus.className = 'option';
+			plus.onclick = self.speedMod;
+			plus.textContent = '+';
+			speed.appendChild(plus);
+			let label = document.createElement('label');
+			label.textContent = "(clicks per second during auto-clicking the big cookie)";
+			speed.appendChild(label);
+			
+			el.appendChild(speed);
+			
+			let settings = l('menu').getElementsByClassName("listing");
+			
+			settings[0].parentNode.insertBefore(el, settings[settings.length - 1].nextSibling);
+		}
+		
+		settingsChanged() {
+			localStorage.setItem("FCSettings", JSON.stringify(self.settings));
+			Game.UpdateMenu();
+		}
+		
+		toggleMod() {
+			self.Enabled = !self.Enabled;
+			if (!self.Enabled && self.isRunning()) {
+				self.mainTicker = clearInterval(self.mainTicker);
+				self.debug("Frenzy Clicker paused.");
+			}
+			if (self.Enabled && !self.isRunning()) {
+				self.resume();
+				self.debug("Frenzy Clicker resumed.");
+			}
+			self.settingsChanged();
+		}
+		
+		speedMod() {
+			let current = Math.round(1000 / self.Speed);
+			let next = 0;
+			// Increase/decrease
+			if (this.id != "FrenzyClicker_Speed") {
+				next = Math.min(100, Math.max(10, current + (this.innerText == "+" ? 10 : -10)));
+			}
+			// Toggle jumps
+			else {
+				if (current < 10 || current >= 100) {
+					next = 10;
+				}
+				else if (current < 25) {
+					next = 25;
+				}
+				else if (current < 50) {
+					next = 50;
+				}
+				else if (current < 75) {
+					next = 75;
+				}
+				else {
+					next = 100;
+				}
+				
+			}
+			self.Speed = 1000 / next;
+			self.debug("Frenzy Clicker click frequency:", self.Speed.toFixed(2), "ms");
+			
+			self.settingsChanged();
+		}
+		
 		tick() {
-			let self = window.FrenzyClicker;
 			if (!self.hasAnyClickBuffs()) {
 				if (self.hadBuffs) {
 					self.hadBuffs = false;
@@ -64,6 +170,10 @@ javascript:(function() {
 			return this.clickBuffs.some((buff) => Game.hasBuff(buff));
 		}
 		
+		resume() {
+			this.mainTicker = setInterval(this.tick, this.Speed);
+		}
+		
 		
 		run() {
 			if (!this.isRunning()) {
@@ -74,15 +184,27 @@ javascript:(function() {
 				}
 				if (!load)
 					return false;
+					
+				if (localStorage.getItem("FCSettings") != null) {
+					self.settings = JSON.parse(localStorage.getItem("FCSettings")); 
+				}
 
-				this.mainTicker = setInterval(this.tick, this.Speed);
+				let realLoop = Game.UpdateMenu;
+				Game.UpdateMenu = () => {
+					realLoop();
+					this.settingsMenu();
+				}
+				Game.UpdateMenu();
+				
+				this.resume();
 				
 				let title = "Frenzy Clicker " + this.version + " loaded";
 				let text = "Click speed: once every " + this.Speed + " milliseconds, or " + (1000 / this.Speed).toFixed(2) + " times per second.";
 				
-				Game.Notify(title, text);
+				Game.Notify(title, text, '', 5, 1);
 				console.info(title + ". " + text);
 			}
+			
 			return this;
 		}
 		
@@ -100,6 +222,9 @@ javascript:(function() {
 	
 		get Speed() { return this.settings.frequency; }
 		set Speed(val) { return this.settings.frequency = val; }
+		
+		get Enabled() { return this.settings.enabled; }
+		set Enabled(val) { return this.settings.enabled = val; }
 		
 		get Debug() { return this.settings.debug; }
 		set Debug(val) { return this.settings.debug = val; }
