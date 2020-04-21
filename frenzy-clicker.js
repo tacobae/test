@@ -18,6 +18,8 @@ javascript:(function() {
 			this.version = "2.019.5",
 			this.clickBuffs = [
 				"Elder frenzy",
+				"Frenzy",
+				"Lucky",
 				"Click frenzy",
 				"Cursed finger",
 				"Cookie storm",
@@ -158,7 +160,7 @@ javascript:(function() {
 				}
 				Game.shimmers.forEach((shimmer) => shimmer.pop())
 			}
-			if (Game.hasBuff('Click frenzy') || Game.hasBuff('Dragonflight') || Game.hasBuff('Elder frenzy') || Game.hasBuff('Cursed finger')) {
+			if (Game.hasBuff('Click frenzy') || Game.hasBuff('Dragonflight') || Game.hasBuff('Frenzy') || Game.hasBuff('Elder frenzy') || Game.hasBuff('Cursed finger')) {
 				Game.ClickCookie();
 			}
 			
